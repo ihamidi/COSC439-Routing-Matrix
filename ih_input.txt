@@ -1,0 +1,5 @@
+As    B    1
+As    D    2
+B    C    4
+C    D    2
+C    E    2

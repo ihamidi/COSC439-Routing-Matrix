@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.StringTokenizer;
 
 public class ih_rmatrix {
@@ -61,13 +62,13 @@ public class ih_rmatrix {
 					  vertices[linenum][i]=linetoken.nextToken();
 	
 				  }
+				  if(!verName.contains(vertices[linenum][0]))
+				  {
+					  verName.add(vertices[linenum][0]);
+				  }
 				  if(!verName.contains(vertices[linenum][1]))
 				  {
 					  verName.add(vertices[linenum][1]);
-				  }
-				  if(!verName.contains(vertices[linenum][2]))
-				  {
-					  verName.add(vertices[linenum][2]);
 				  }
 				  linenum++;
 				}
@@ -75,20 +76,34 @@ public class ih_rmatrix {
 				System.out.println("FILE NOT IN CORRECT FORMAT");
 				System.exit(1);
 			}
-	        
-	        
-//	        ShortestPath(0,vertices,outputfile);
-	}
+	        System.out.println(verName.size());
+	        Collections.sort(verName);
+			int[][]matrix=createMatrix(vertices, verName.size(), verName);
+			String [][]routes=new String[matrix.length][matrix.length];
+			for(int i=0;i<matrix.length;i++)
+			{
+				routes[i]=ShortestPath(i,matrix,verName);
+			}
+			for(int i=0;i<routes.length;i++)
+			{
+				for(int j=0;j<routes.length;j++)
+				{
+					System.out.print(routes[j][i]+" ");
+				}
+				System.out.println();
+			}
+			
+			
+	  }
 	  
-	  
-		/*
+	  /*
 		 * ShortestPath
 		 * Method takes a source vertex, the madjacency matrix, and a file name to output to
 		 * Runs Djikstras algorithm on the matrix and writes to file
 		 */
-	  public static void ShortestPath(int source, String[][]matrix,  String outputFile) throws IOException
+		public static String[] ShortestPath(int source, int[][]matrix,ArrayList<String>verNames) throws IOException
 		{
-			int s=source-1;
+			int s=source;
 			int cntrue=0;
 			//three arrays to keep track of previous vertex,shortest distance, and marking the vertices
 			int [] D= new int[matrix.length];
@@ -98,21 +113,14 @@ public class ih_rmatrix {
 			//setting distance to the source's row of the matrix
 			for(int i=0;i<matrix.length;i++)
 			{
-					C[i]=true;
-					cntrue++;
-					if(matrix[s][0]==matrix[i][1])
-					{
-						D[i]=Integer.parseInt(matrix[i][2]);
-					}
-					else
-					{
-						D[i]=10000000;
-					}
-				P[i]=matrix[i][0];
+				C[i]=true;
+				cntrue++;
+				D[i]=matrix[s][i];		
+				P[i]=""+s;
 			}
 			//finding the smallest value in D, marking it in C
 			while(cntrue>=0) {
-				int min=10000000;
+				int min=100000;
 				int index=0;
 				for(int i=0;i<D.length;i++)
 				{
@@ -126,12 +134,12 @@ public class ih_rmatrix {
 				C[index]=false;
 				cntrue--;
 				//checking to see if going through any point is smaller than going to direct path
-				for(int j=0;j<matrix[0].length;j++)
+				for(int j=0;j<matrix.length;j++)
 				{
 					//if it is less, set the new distance to the vertex and Change value of P to vertex of the index
 					if(min+matrix[index][j]<D[j]) {
 						D[j]=min+matrix[index][j];
-						P[j]=P[j]+"-"+(index+1);
+						P[j]=""+index;
 					}
 						
 				}
@@ -139,15 +147,25 @@ public class ih_rmatrix {
 
 				
 			}
-			for(int i=0;i<D.length;i++)
-				if(i!=s)
-					P[i]=P[i]+"-"+(i+1);
+//			for(int i=0;i<D.length;i++)
+//				if(i!=s)
+//					P[i]=P[i]+"-"+i;
+			
 			
 			for(int i=0;i<D.length;i++)
-				System.out.println("["+D[i]+"]"+" "+P[i]);
-			
+				if(i!=s) {
+					System.out.println(verNames.get(Integer.parseInt(P[i]))+","+D[i]);
+					P[i]=verNames.get(Integer.parseInt(P[i]))+","+D[i];
+				}
+				else {
+					System.out.println("-");
+					P[i]="-";
+
+				}
+			//returns the vertical of each column in matrix
+			return P;
 //			//points a file writer to output file with same name +"out"
-//			FileWriter fw = new FileWriter(new File("src/"+output));
+//			FileWriter fw = new FileWriter(new File("src/"+name+"out"));
 //			fw.write("Shortest Path from "+source+":\n");
 //			//writing each matrix value to the file
 //			for(int i = 0; i < D.length; ++i)
@@ -160,9 +178,37 @@ public class ih_rmatrix {
 //			}
 //			fw.close();
 		}
-	  public static int[][] createMatrrix(String[][]vertices)
+
+	
+	  public static int[][] createMatrix(String[][]vertices,int size, ArrayList<String>verNames)
 	  {
-		  int[][]matrix= new int[0][0];
+		  int[][]matrix= new int[size][size];
+		  for(int i=0;i<vertices.length;i++)
+		  {
+			  matrix[verNames.indexOf(vertices[i][0])]
+					  [verNames.indexOf(vertices[i][1])]=Integer.parseInt(vertices[i][2]);
+			  matrix[verNames.indexOf(vertices[i][1])]
+					  [verNames.indexOf(vertices[i][0])]=Integer.parseInt(vertices[i][2]);
+		  }
+		  
+		  
+			for(int i = 0; i < size; ++i)
+			{
+			    for(int j = 0; j < size; ++j)
+			    {
+				       //large number to represent no direct path
+				       if((i!=j)&&matrix[i][j]==0)
+			           {
+		            	matrix[i][j]=10000000;
+		               }
+			    }
+				    
+			}
+		  for(int i=0;i<matrix.length;i++) {
+			  for(int j=0;j<matrix.length;j++)
+				  System.out.print(matrix[i][j]+" ");
+			  System.out.println();
+		  }
 		return matrix;
 	  }
 
