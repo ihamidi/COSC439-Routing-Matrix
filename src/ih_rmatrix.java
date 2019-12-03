@@ -41,13 +41,16 @@ public class ih_rmatrix {
 	        while ((strLine = br.readLine()) != null)   {
 	          count++;
 	        }
-	        System.out.println(count+" is the number of lines"+delim+"l");
 			
 	        //arraylist to keep track of varibale names
 	        ArrayList<String>verName= new ArrayList<String>();
 			
 	        //buffered read to read in the file
 	        BufferedReader in = new BufferedReader(new FileReader(new File("./"+inputfile)));
+	        //filewriter to write to output file
+			FileWriter fw = new FileWriter(new File("./"+outputfile));
+
+	        
 	        String st;
 	        //2d array to hold the graph
 	        String[][]vertices=new String[count][3];
@@ -55,7 +58,6 @@ public class ih_rmatrix {
 	        try {
 	        	int linenum=0;
 				while ((st = in.readLine()) != null) {
-				  System.out.println(st);
 				  StringTokenizer linetoken=new StringTokenizer(st);
 				  for(int i=0; i<vertices[0].length;i++)
 				  {
@@ -76,7 +78,6 @@ public class ih_rmatrix {
 				System.out.println("FILE NOT IN CORRECT FORMAT");
 				System.exit(1);
 			}
-	        System.out.println(verName.size());
 	        Collections.sort(verName);
 			int[][]matrix=createMatrix(vertices, verName.size(), verName);
 			String [][]routes=new String[matrix.length][matrix.length];
@@ -84,14 +85,39 @@ public class ih_rmatrix {
 			{
 				routes[i]=ShortestPath(i,matrix,verName);
 			}
+			
+			
+			//printing the routing matrix to Console, as well as system
+			//printing the headers of the table
+			String printString="";
+			printString=String.format("%-" + 15 + "s", printString);
+			fw.write(printString);
+			System.out.print(printString);
+			for(int i=0;i<verName.size();i++) {
+				printString=String.format("%-" + 15 + "s", verName.get(i));  
+				fw.write(printString);
+				System.out.print(printString);
+			}
+		    fw.write("\n");
+			System.out.println();
+			
+			//printing the actual contents of the table, such as distance and vertex
 			for(int i=0;i<routes.length;i++)
 			{
+				printString=String.format("%-" + 15 + "s",  verName.get(i));
+				fw.write(printString);
+				System.out.print(printString);
 				for(int j=0;j<routes.length;j++)
 				{
-					System.out.print(routes[j][i]+" ");
+					printString=String.format("%-" + 15 + "s", routes[j][i]);  
+					fw.write(printString);
+					System.out.print(printString);
 				}
+			    fw.write("\n");
 				System.out.println();
 			}
+			fw.close();
+
 			
 			
 	  }
@@ -154,11 +180,9 @@ public class ih_rmatrix {
 			
 			for(int i=0;i<D.length;i++)
 				if(i!=s) {
-					System.out.println(verNames.get(Integer.parseInt(P[i]))+","+D[i]);
 					P[i]=verNames.get(Integer.parseInt(P[i]))+","+D[i];
 				}
 				else {
-					System.out.println("-");
 					P[i]="-";
 
 				}
@@ -204,11 +228,6 @@ public class ih_rmatrix {
 			    }
 				    
 			}
-		  for(int i=0;i<matrix.length;i++) {
-			  for(int j=0;j<matrix.length;j++)
-				  System.out.print(matrix[i][j]+" ");
-			  System.out.println();
-		  }
 		return matrix;
 	  }
 
