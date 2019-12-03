@@ -11,6 +11,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.StringTokenizer;
+/**
+ * Project 4 COSC 439
+ * ROUTING MATRIX USING DJIKSTRAS ALGORITHM
+ * @author Izhak Hamid, E01533340
+ *
+ */
 
 public class ih_rmatrix {
 
@@ -109,6 +115,8 @@ public class ih_rmatrix {
 				System.out.print(printString);
 				for(int j=0;j<routes.length;j++)
 				{
+					//printing in transverse order because the first node of destination
+					//is last node of source
 					printString=String.format("%-" + 15 + "s", routes[j][i]);  
 					fw.write(printString);
 					System.out.print(printString);
@@ -124,8 +132,9 @@ public class ih_rmatrix {
 	  
 	  /*
 		 * ShortestPath
-		 * Method takes a source vertex, the madjacency matrix, and a file name to output to
+		 * Method takes a source vertex, the adjacency matrix, and a file name to output to
 		 * Runs Djikstras algorithm on the matrix and writes to file
+		 * Created by Izhak Hamidi for COSC 314, Repurposed and refactored for COSC 439
 		 */
 		public static String[] ShortestPath(int source, int[][]matrix,ArrayList<String>verNames) throws IOException
 		{
@@ -173,10 +182,7 @@ public class ih_rmatrix {
 
 				
 			}
-//			for(int i=0;i<D.length;i++)
-//				if(i!=s)
-//					P[i]=P[i]+"-"+i;
-			
+
 			
 			for(int i=0;i<D.length;i++)
 				if(i!=s) {
@@ -188,22 +194,16 @@ public class ih_rmatrix {
 				}
 			//returns the vertical of each column in matrix
 			return P;
-//			//points a file writer to output file with same name +"out"
-//			FileWriter fw = new FileWriter(new File("src/"+name+"out"));
-//			fw.write("Shortest Path from "+source+":\n");
-//			//writing each matrix value to the file
-//			for(int i = 0; i < D.length; ++i)
-//			{
-//				if(!(D[i]==10000000))
-//					fw.write("["+D[i]+"]"+" "+P[i]);
-//				else
-//					fw.write("No path to Vertex "+(i+1)+" from source");
-//			    fw.write("\n");
-//			}
-//			fw.close();
+
 		}
 
-	
+		/**
+		 * CREATES AN ADJANCENCY MATRIX REPRESENTING A GRAPH
+		 * @param vertices THE GRAPH TO REPRESENT
+		 * @param size SIZE OF MATRIX
+		 * @param verNames VERTEX NAMES
+		 * @return
+		 */
 	  public static int[][] createMatrix(String[][]vertices,int size, ArrayList<String>verNames)
 	  {
 		  int[][]matrix= new int[size][size];
